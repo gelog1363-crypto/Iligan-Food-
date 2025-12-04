@@ -1,7 +1,10 @@
 {
-  "name": "it-elic",
+  "name": "iligan-food-hub",
+  "version": "1.0.0",
+  "engines": {
+    "node": "24.x"
+  },
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -28,13 +31,5 @@
     "globals": "^16.4.0",
     "tailwindcss": "^4.1.17",
     "vite": "^7.2.6"
-  },
-  "engines": {
-    "node": "18.x"
-  },
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "main": "eslint.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  }
 }
