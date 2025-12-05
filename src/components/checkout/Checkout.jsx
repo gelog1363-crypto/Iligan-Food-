@@ -166,6 +166,46 @@ export const Checkout = ({ setPage, cart, setCart, user }) => {
     setInDeliveryArea(ILIGAN_BRGYS.includes(address.barangay));
   }, [address.barangay]);
 
+  // Fetch user profile (if any) and prefill recipient details
+  useEffect(() => {
+    if (!user?.id) return;
+
+    let cancelled = false;
+    const fetchProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .select('full_name, phone, address, barangay')
+          .eq('id', user.id)
+          .single();
+
+        if (cancelled) return;
+
+        if (error) {
+          // no profile is fine; just don't prefill
+          // console.debug('No user profile or fetch error', error.message || error);
+          return;
+        }
+
+        if (data) {
+          setAddress(prev => ({
+            ...prev,
+            name: data.full_name || prev.name,
+            phone: data.phone || prev.phone,
+            addressDetail: data.address || prev.addressDetail,
+            barangay: data.barangay || prev.barangay,
+          }));
+        }
+      } catch (e) {
+        // swallow fetch errors; leave form as-is
+        // console.error('Failed to fetch user profile', e);
+      }
+    };
+
+    fetchProfile();
+    return () => { cancelled = true; };
+  }, [user]);
+
   return (
     <>
       {/* Success Modal */}
