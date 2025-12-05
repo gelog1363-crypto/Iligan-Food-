@@ -8,6 +8,12 @@ const PRECACHE_URLS = [
   '/offline.html'
 ];
 
+// Precache built assets so app shell (JS/CSS) is available offline.
+// These are the current build filenames found in `/build/assets`.
+// Update these when you rebuild (or use a plugin to auto-generate the service worker).
+PRECACHE_URLS.push('/assets/index-l4FwrfF9.js');
+PRECACHE_URLS.push('/assets/index-BKIsVyiy.css');
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(PRECACHE)
@@ -77,8 +83,17 @@ self.addEventListener('fetch', event => {
         }
         return response;
       }).catch(() => {
-        // If request is an image, optionally return a placeholder (not implemented)
-        return caches.match('/offline.html');
+        // Don't return the HTML offline page for failed JS/CSS requests — that causes white screens.
+        // Instead, provide resource-appropriate fallbacks.
+        if (request.destination === 'image') {
+          // Return a tiny inline SVG placeholder
+          const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="#f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-size="20">Image unavailable</text></svg>';
+          return new Response(svg, { headers: { 'Content-Type': 'image/svg+xml' } });
+        }
+
+        // For scripts/styles/fonts, return a 503 response so the browser fails gracefully
+        // (we expect these resources to be precached; if not available, this avoids injecting HTML into JS).
+        return new Response('Service Unavailable', { status: 503, statusText: 'Service Unavailable' });
       });
     })
   );
