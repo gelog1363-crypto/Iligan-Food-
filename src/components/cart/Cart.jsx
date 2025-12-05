@@ -1,22 +1,32 @@
 // components/cart/Cart.jsx
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { ORANGE, NAVY, BORDER } from '../../config/constants';
 import { SectionTitle } from '../common/SectionTitle';
 import { FoodButton } from '../common/FoodButton';
 
 export const Cart = ({ setPage, cart, setCart }) => {
-  const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
+  const safeCart = Array.isArray(cart) ? cart : [];
+
+  const total = useMemo(() => safeCart.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 0), 0), [safeCart]);
 
   const updateQuantity = (id, change) => {
     setCart(prevCart => {
-      const newCart = prevCart.map(item =>
-        item.id === id ? { ...item, quantity: item.quantity + change } : item
-      ).filter(item => item.quantity > 0);
+      const current = Array.isArray(prevCart) ? prevCart : [];
+      const newCart = current.map(item =>
+        item.id === id ? { ...item, quantity: (item.quantity || 0) + change } : item
+      ).filter(item => (item.quantity || 0) > 0);
       return newCart;
     });
   };
 
-  if (cart.length === 0) {
+  // If cart becomes empty, automatically go to products so user can order again
+  useEffect(() => {
+    if (safeCart.length === 0) {
+      setPage('products');
+    }
+  }, [safeCart, setPage]);
+
+  if (safeCart.length === 0) {
     return (
       <div className="p-4 md:p-6 text-center h-full flex flex-col justify-center items-center mx-auto w-full max-w-3xl">
         <span className='text-6xl mb-4'>🛵</span>
@@ -31,7 +41,7 @@ export const Cart = ({ setPage, cart, setCart }) => {
 
   // Group cart items by restaurant
   const cartByRestaurant = useMemo(() => {
-    return cart.reduce((acc, item) => {
+    return safeCart.reduce((acc, item) => {
       const restaurantName = item.restaurant_name || 'Unspecified Restaurant';
       if (!acc[restaurantName]) {
         acc[restaurantName] = [];
@@ -39,7 +49,7 @@ export const Cart = ({ setPage, cart, setCart }) => {
       acc[restaurantName].push(item);
       return acc;
     }, {});
-  }, [cart]);
+  }, [safeCart]);
 
   return (
     <div className="p-4 md:p-6 mx-auto w-full max-w-3xl">
