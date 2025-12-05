@@ -7,13 +7,20 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss(), // <--- It must be inside the array, separated by a comma
+    tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
       strategies: 'generateSW',
-      includeAssets: ['logo.png', 'favicon.ico', 'robots.txt', 'offline.html'],
+      includeAssets: ['favicon.ico', 'robots.txt'],
       workbox: {
         navigateFallback: '/offline.html',
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.(json|graphql)/,
+            handler: 'NetworkFirst',
+            options: { cacheName: 'api-cache' }
+          }
+        ]
       },
       manifest: {
         name: 'Iligan Food',

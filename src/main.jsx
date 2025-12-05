@@ -2,6 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './App.css'
 import App from './App.jsx'
+import { registerSW } from 'virtual:pwa-register'
+registerSW({ immediate: true })
 
 // Register service worker for offline support
 if ('serviceWorker' in navigator) {
