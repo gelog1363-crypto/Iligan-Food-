@@ -5,6 +5,7 @@ import { useSupabase } from './hooks/useSupabase';
 import { ORANGE, LIGHT_BG, BORDER } from './config/constants';
 import { Loading } from './components/common/Loading';
 import { AuthPage } from './components/auth/AuthPage';
+import Profile from './components/auth/Profile';
 import { RestaurantListing } from './components/products/RestaurantListing';
 import { Cart } from './components/cart/Cart';
 import { Checkout } from './components/checkout/Checkout';
@@ -25,6 +26,8 @@ const App = () => {
       setPage('auth'); 
     }).catch(console.error);
   }, []);
+
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     if (!authReady) return;
@@ -115,6 +118,9 @@ const App = () => {
             {user && (
               <div className="flex items-center text-white text-sm">
                 <span className="mr-3 font-semibold hidden sm:inline">Hi, **{displayUserId}**</span>
+                <button onClick={() => setShowProfile(true)} title="My Profile" className="mr-3 w-9 h-9 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 flex items-center justify-center">
+                  <span className="text-lg">👤</span>
+                </button>
                 <button onClick={handleSignOut} className="px-3 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all font-bold">
                   Logout
                 </button>
@@ -163,6 +169,7 @@ const App = () => {
           <span className="text-2xl">🍽️</span>
         </button>
       )}
+        {showProfile && <Profile user={user} onClose={() => setShowProfile(false)} />}
     </div>
   );
 };
