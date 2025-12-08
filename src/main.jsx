@@ -1,14 +1,19 @@
+// main.jsx
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './App.css'
 import App from './App.jsx'
-import { registerSW } from 'virtual:pwa-register'
-registerSW({ immediate: true })
+import { registerSW } from 'virtual:pwa-register' // This is the preferred method
 
-// Register service worker for offline support
+// 1. PWA Registration (Use the plugin's function)
+// This registers the generated '/sw.js' file and handles updates.
+registerSW({ immediate: true }) 
+
+// 2. Remove the conflicting manual registration block:
+/*
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('/service-worker.js') // This path is wrong!
       .then(registration => {
         console.log('ServiceWorker registration successful:', registration);
       })
@@ -17,6 +22,7 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+*/
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
