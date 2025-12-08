@@ -10,14 +10,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       strategies: 'generateSW',
-      // ✅ ADD 'offline.html' HERE:
-      includeAssets: ['favicon.ico', 'robots.txt', 'offline.html'], 
+      // Explicitly includes the offline page and standard assets
+      includeAssets: ['favicon.ico', 'robots.txt', 'offline.html', 'logo.png'], 
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'], // Ensures all standard assets are cached
-        navigateFallback: '/offline.html', // Falls back to this page if no internet
-        navigateFallbackDeny: [/^\/api/], // Don't try to show offline page for API calls
+        // Caches common assets (js, css, html, images)
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'], 
+        navigateFallback: '/offline.html',
+        // --- REMOVED: navigateFallbackDeny property to fix the build error. ---
         runtimeCaching: [
           {
+            // Caches specific API calls (e.g., Supabase or GraphQL)
             urlPattern: /^https:\/\/.*\.(json|graphql)/,
             handler: 'NetworkFirst',
             options: { 
@@ -39,7 +41,7 @@ export default defineConfig({
         background_color: '#ffffff',
         icons: [
           {
-            src: '/logo.png', // Ensure you have a logo.png in public folder
+            src: '/logo.png', 
             sizes: '192x192',
             type: 'image/png'
           },
