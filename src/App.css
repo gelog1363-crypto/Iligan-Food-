@@ -331,3 +331,25 @@ ease-in-out infinite;
     opacity: 0;
   }
 }
+/* Inside src/App.css or src/index.css */
+
+@keyframes motorMove {
+    0% {
+        transform: translateX(-50px) rotate(0deg);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translateX(0px) rotate(5deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50px) rotate(0deg);
+        opacity: 0.5;
+    }
+}
+
+.motor-moving-animation {
+    object-fit: contain; 
+    animation: motorMove 4s ease-in-out infinite alternate;
+}
+
